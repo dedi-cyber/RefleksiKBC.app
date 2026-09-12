@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Refleksi Baseline KBC - MTsN 4 Agam</title>
+<title>Refleksi Baseline KBC - Dedi Efendi, S.Pd., M.PFis.</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -79,16 +79,94 @@
   .summarybox .sc .l { font-size: 12px; color: #7C8A81; }
   .note { font-size: 11.5px; color: #8B968F; margin-top: 10px; }
   .loading { text-align: center; color: #8B968F; font-size: 13px; padding: 20px 0; }
+
+  .login-screen { min-height: 60vh; display: flex; align-items: center; justify-content: center; }
+  .login-card {
+    background: #fff; border: 1px solid #DCE3DF; border-radius: 12px;
+    padding: 32px 26px; width: 100%; max-width: 360px; text-align: center;
+  }
+  .login-card .badge {
+    width: 44px; height: 44px; border-radius: 50%; background: #1F4E3D;
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; margin: 0 auto 14px;
+  }
+  .login-card h1 { font-size: 17px; margin: 0 0 4px; color: #1F4E3D; }
+  .login-card p { font-size: 13px; color: #7C8A81; margin: 0 0 20px; }
+  .login-card label { text-align: left; margin-top: 0; }
+  .role-btn {
+    width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; border: 1px solid #C9D3CD; border-radius: 8px; background: #FAFBFA;
+    font-size: 14px; cursor: pointer; color: #2C3B33; margin-bottom: 10px;
+  }
+  .role-btn:hover { border-color: #1F4E3D; background: #F0F5F1; }
+  .role-btn .chev { color: #9AA6A0; font-size: 12px; }
+  .role-menu { position: relative; }
+  .role-dropdown {
+    position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+    background: #fff; border: 1px solid #DCE3DF; border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08); overflow: hidden; z-index: 5; display: none;
+  }
+  .role-dropdown.open { display: block; }
+  .role-option {
+    padding: 11px 14px; font-size: 14px; text-align: left; cursor: pointer; color: #2C3B33;
+    border-bottom: 1px solid #EEF1EF;
+  }
+  .role-option:last-child { border-bottom: none; }
+  .role-option:hover { background: #F0F5F1; }
+  button.enter {
+    margin-top: 16px; width: 100%; padding: 11px; background: #1F4E3D; color: #fff;
+    border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  button.enter:disabled { background: #C9D3CD; cursor: not-allowed; }
+  .app-content { display: none; }
+  .role-tag {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+    background: #E7F0EA; color: #1F4E3D; padding: 5px 10px; border-radius: 20px; cursor: pointer;
+  }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .locked-msg {
+    background: #FCEEEA; border: 1px solid #EAC3B5; border-radius: 8px;
+    padding: 14px 16px; font-size: 13px; color: #7A3A24; margin-bottom: 6px;
+  }
+  .locked-msg b { display: block; font-size: 14px; margin-bottom: 4px; color: #5E2C1B; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>Refleksi Baseline KBC</h1>
-    <p>MTsN 4 Agam - Siklus 1 (Nilai Spiritual dan Nilai Personal)</p>
-  </header>
 
-  <div class="tabs">
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <div class="badge">KBC</div>
+      <h1>Refleksi Baseline KBC</h1>
+      <p>MTsN 4 Agam, pilih peran Anda untuk masuk</p>
+      <p style="font-size:11.5px; color:#9AA6A0; margin:-14px 0 20px;">Disusun oleh Dedi Efendi, S.Pd., M.PFis.<br>Pengawas Madrasah, Kantor Kemenag Kab. Agam</p>
+      <label>Masuk sebagai</label>
+      <div class="role-menu">
+        <div class="role-btn" id="role-select" onclick="toggleDropdown()">
+          <span id="role-select-label">Pilih peran</span>
+          <span class="chev">&#9662;</span>
+        </div>
+        <div class="role-dropdown" id="role-dropdown">
+          <div class="role-option" onclick="pickRole('guru','Guru')">Guru</div>
+          <div class="role-option" onclick="pickRole('kamad','Kepala madrasah')">Kepala madrasah</div>
+          <div class="role-option" onclick="pickRole('pengawas','Pengawas')">Pengawas</div>
+        </div>
+      </div>
+      <button class="enter" id="enter-btn" disabled onclick="enterApp()">Masuk</button>
+    </div>
+  </div>
+
+  <div class="app-content" id="app-content">
+  <div class="top-bar">
+    <header style="border-bottom:none; margin-bottom:0; padding:6px 0;">
+      <h1>Refleksi Baseline KBC</h1>
+      <p>MTsN 4 Agam - Siklus 1 (Nilai Spiritual dan Nilai Personal)</p>
+      <p style="font-size:11px; color:#9AA6A0; margin:2px 0 0;">Dedi Efendi, S.Pd., M.PFis. - Pengawas Madrasah, Kantor Kemenag Kab. Agam</p>
+    </header>
+    <span class="role-tag" onclick="confirmLogout()" id="role-tag">Keluar</span>
+  </div>
+
+  <div class="tabs" id="tabs-row">
     <div class="tab active" data-tab="guru">Refleksi Guru</div>
     <div class="tab" data-tab="kamad">Refleksi Kamad</div>
     <div class="tab" data-tab="observasi">Observasi</div>
@@ -101,6 +179,9 @@
       <h2>Refleksi Guru</h2>
       <p class="sub">Isi mandiri, jawaban tidak memengaruhi penilaian kinerja.</p>
 
+      <div class="locked-msg" id="g-locked" style="display:none;"></div>
+
+      <div id="g-fields">
       <label>Nama guru</label>
       <input type="text" id="g-nama" placeholder="Nama lengkap">
 
@@ -130,7 +211,9 @@
       <textarea id="g-t2" placeholder="Tulis pengalaman Anda"></textarea>
 
       <button class="submit" onclick="submitGuru()">Simpan refleksi guru</button>
+      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimGuruKeSheet()">Kirim ke Google Sheet</button>
       <div class="msg" id="g-msg"></div>
+      </div>
     </div>
   </div>
 
@@ -140,6 +223,9 @@
       <h2>Refleksi Kepala Madrasah</h2>
       <p class="sub">Isi mandiri, jawaban untuk perencanaan pendampingan, bukan evaluasi jabatan.</p>
 
+      <div class="locked-msg" id="k-locked" style="display:none;"></div>
+
+      <div id="k-fields">
       <label>Nama kepala madrasah</label>
       <input type="text" id="k-nama" placeholder="Nama lengkap">
 
@@ -172,7 +258,9 @@
       <input type="text" id="k-bukti" placeholder="Contoh: SK tata tertib madrasah">
 
       <button class="submit" onclick="submitKamad()">Simpan refleksi kamad</button>
+      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimKamadKeSheet()">Kirim ke Google Sheet</button>
       <div class="msg" id="k-msg"></div>
+      </div>
     </div>
   </div>
 
@@ -182,6 +270,9 @@
       <h2>Checklist observasi lapangan</h2>
       <p class="sub">Isi di awal kunjungan, sebelum wawancara guru dan kamad.</p>
 
+      <div class="locked-msg" id="o-locked" style="display:none;"></div>
+
+      <div id="o-fields">
       <div class="checkrow">
         <span class="label">Mading atau papan informasi bertema nilai spiritual dan personal</span>
         <select id="o-1"><option value="">Pilih</option><option>Ada</option><option>Tidak</option></select>
@@ -203,19 +294,163 @@
       <textarea id="o-catatan" placeholder="Tulis catatan tambahan hasil pengamatan"></textarea>
 
       <button class="submit" onclick="submitObservasi()">Simpan hasil observasi</button>
+      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimObservasiKeSheet()">Kirim ke Google Sheet</button>
       <div class="msg" id="o-msg"></div>
+      </div>
     </div>
   </div>
 
   <!-- REKAP -->
   <div class="panel" id="panel-rekap">
+    <div class="card" style="margin-bottom:12px;">
+      <h2>Kunci perangkat ini</h2>
+      <p class="sub">Gunakan hanya kalau ada kesalahan pengisian dan perlu diisi ulang dari perangkat ini.</p>
+      <button class="submit" style="background:#8A4A2E;" onclick="resetAllLocks()">Buka kunci guru, kamad, observasi di perangkat ini</button>
+    </div>
     <div id="rekap-content" class="loading">Memuat data...</div>
   </div>
 
   <p class="note">Data disimpan bersama di penyimpanan artefak ini dan bisa dilihat oleh siapa pun yang membuka formulir ini.</p>
+  <p class="note">Dedi Efendi, S.Pd., M.PFis. - Pengawas Madrasah di Kantor Kemenag Kab. Agam.</p>
+  </div>
 </div>
 
 <script>
+var selectedRole = null;
+var roleLabels = { guru: 'Guru', kamad: 'Kepala madrasah', pengawas: 'Pengawas' };
+var roleTabs = {
+  guru: ['guru'],
+  kamad: ['kamad'],
+  pengawas: ['observasi', 'rekap']
+};
+
+function toggleDropdown() {
+  document.getElementById('role-dropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  var menu = document.querySelector('.role-menu');
+  if (menu && !menu.contains(e.target)) {
+    document.getElementById('role-dropdown').classList.remove('open');
+  }
+});
+
+function pickRole(value, label) {
+  selectedRole = value;
+  document.getElementById('role-select-label').textContent = label;
+  document.getElementById('role-dropdown').classList.remove('open');
+  document.getElementById('enter-btn').disabled = false;
+}
+
+function enterApp() {
+  if (!selectedRole) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-content').style.display = 'block';
+  document.getElementById('role-tag').textContent = 'Keluar';
+
+  applyLockState('guru');
+  applyLockState('kamad');
+  applyLockState('observasi');
+
+  var allowed = roleTabs[selectedRole];
+  var tabs = document.querySelectorAll('#tabs-row .tab');
+  var firstAllowed = null;
+  tabs.forEach(function(tab) {
+    if (allowed.indexOf(tab.dataset.tab) === -1) {
+      tab.style.display = 'none';
+      tab.classList.remove('active');
+    } else {
+      tab.style.display = '';
+      if (!firstAllowed) firstAllowed = tab.dataset.tab;
+    }
+  });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  if (firstAllowed) {
+    document.getElementById('panel-' + firstAllowed).classList.add('active');
+    tabs.forEach(function(tab){
+      if (tab.dataset.tab === firstAllowed) tab.classList.add('active');
+    });
+    if (firstAllowed === 'rekap') loadRekap();
+  }
+}
+
+function confirmLogout() {
+  var ok = window.confirm('Keluar dari formulir ini? Anda perlu memilih peran lagi untuk masuk kembali.');
+  if (!ok) return;
+  selectedRole = null;
+  document.getElementById('role-select-label').textContent = 'Pilih peran';
+  document.getElementById('enter-btn').disabled = true;
+  document.getElementById('app-content').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+var LOCK_PREFIX = 'kbc_device_lock_';
+
+function isLocked(role) {
+  try {
+    return !!localStorage.getItem(LOCK_PREFIX + role);
+  } catch (e) {
+    return false;
+  }
+}
+
+function getLockInfo(role) {
+  try {
+    var v = localStorage.getItem(LOCK_PREFIX + role);
+    return v ? JSON.parse(v) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setLocked(role, nama) {
+  try {
+    localStorage.setItem(LOCK_PREFIX + role, JSON.stringify({ nama: nama, tanggal: todayStr() }));
+  } catch (e) {}
+  applyLockState(role);
+}
+
+function clearLocked(role) {
+  try {
+    localStorage.removeItem(LOCK_PREFIX + role);
+  } catch (e) {}
+  applyLockState(role);
+}
+
+function resetAllLocks() {
+  var ok = window.confirm('Buka kembali kunci pengisian guru, kamad, dan observasi di perangkat ini?');
+  if (!ok) return;
+  clearLocked('guru');
+  clearLocked('kamad');
+  clearLocked('observasi');
+  alert('Kunci perangkat sudah dibuka. Formulir bisa diisi lagi dari perangkat ini.');
+}
+
+var lockLabels = {
+  guru: { fields: 'g-fields', msg: 'g-locked', title: 'Refleksi guru sudah diisi dari perangkat ini' },
+  kamad: { fields: 'k-fields', msg: 'k-locked', title: 'Refleksi kepala madrasah sudah diisi dari perangkat ini' },
+  observasi: { fields: 'o-fields', msg: 'o-locked', title: 'Observasi sudah diisi dari perangkat ini' }
+};
+
+function applyLockState(role) {
+  var cfg = lockLabels[role];
+  if (!cfg) return;
+  var locked = isLocked(role);
+  var fieldsEl = document.getElementById(cfg.fields);
+  var msgEl = document.getElementById(cfg.msg);
+  if (locked) {
+    var info = getLockInfo(role);
+    fieldsEl.style.display = 'none';
+    msgEl.style.display = 'block';
+    msgEl.innerHTML = '<b>' + cfg.title + '</b>Diisi pada ' + (info ? info.tanggal : '') +
+      (info && info.nama ? ' atas nama ' + info.nama : '') +
+      '. Setiap perangkat hanya boleh mengisi 1 kali untuk peran ini. Hubungi pengawas kalau ini keliru.';
+  } else {
+    fieldsEl.style.display = '';
+    msgEl.style.display = 'none';
+  }
+}
+
 function todayStr() {
   var d = new Date();
   return d.toISOString().slice(0,10);
@@ -246,6 +481,7 @@ function showMsg(id, text, ok) {
 }
 
 async function submitGuru() {
+  if (isLocked('guru')) { showMsg('g-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
   var nama = document.getElementById('g-nama').value.trim();
   if (!nama) { showMsg('g-msg', 'Isi nama guru terlebih dahulu.', false); return; }
   var entry = {
@@ -264,13 +500,14 @@ async function submitGuru() {
     var res = await window.storage.set(key, JSON.stringify(entry), true);
     if (!res) throw new Error('gagal simpan');
     showMsg('g-msg', 'Refleksi guru tersimpan.', true);
-    ['g-nama','g-t1','g-t2'].forEach(function(id){ document.getElementById(id).value = ''; });
+    setLocked('guru', nama);
   } catch (e) {
     showMsg('g-msg', 'Gagal menyimpan, coba lagi.', false);
   }
 }
 
 async function submitKamad() {
+  if (isLocked('kamad')) { showMsg('k-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
   var nama = document.getElementById('k-nama').value.trim();
   if (!nama) { showMsg('k-msg', 'Isi nama kepala madrasah terlebih dahulu.', false); return; }
   var entry = {
@@ -290,13 +527,14 @@ async function submitKamad() {
     var res = await window.storage.set(key, JSON.stringify(entry), true);
     if (!res) throw new Error('gagal simpan');
     showMsg('k-msg', 'Refleksi kepala madrasah tersimpan.', true);
-    ['k-nama','k-t1','k-t2','k-bukti'].forEach(function(id){ document.getElementById(id).value = ''; });
+    setLocked('kamad', nama);
   } catch (e) {
     showMsg('k-msg', 'Gagal menyimpan, coba lagi.', false);
   }
 }
 
 async function submitObservasi() {
+  if (isLocked('observasi')) { showMsg('o-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
   var vals = [
     document.getElementById('o-1').value,
     document.getElementById('o-2').value,
@@ -324,11 +562,93 @@ async function submitObservasi() {
     var res = await window.storage.set(key, JSON.stringify(entry), true);
     if (!res) throw new Error('gagal simpan');
     showMsg('o-msg', 'Hasil observasi tersimpan.', true);
-    ['o-1','o-2','o-3','o-4'].forEach(function(id){ document.getElementById(id).value = ''; });
-    document.getElementById('o-catatan').value = '';
+    setLocked('observasi', '');
   } catch (e) {
     showMsg('o-msg', 'Gagal menyimpan, coba lagi.', false);
   }
+}
+
+// Ganti URL di bawah ini dengan URL Web App hasil deploy Google Apps Script Anda.
+// Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
+var GOOGLE_SCRIPT_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
+
+function sendToGoogleSheet(sheetName, entry, msgId) {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('GANTI_DENGAN') !== -1) {
+    showMsg(msgId, 'URL Google Sheet belum diatur. Hubungi pengawas untuk mengatur ini.', false);
+    return;
+  }
+  var payload = Object.assign({ sheet: sheetName }, entry);
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).then(function() {
+    showMsg(msgId, 'Data terkirim ke Google Sheet.', true);
+  }).catch(function() {
+    showMsg(msgId, 'Gagal mengirim ke Google Sheet. Periksa koneksi internet.', false);
+  });
+}
+
+function kirimGuruKeSheet() {
+  if (isLocked('guru')) { showMsg('g-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
+  var nama = document.getElementById('g-nama').value.trim();
+  if (!nama) { showMsg('g-msg', 'Isi nama guru terlebih dahulu.', false); return; }
+  var entry = {
+    nama: nama,
+    tanggal: document.getElementById('g-tanggal').value,
+    s1: Number(document.getElementById('g-s1').value),
+    s2: Number(document.getElementById('g-s2').value),
+    p1: Number(document.getElementById('g-p1').value),
+    p2: Number(document.getElementById('g-p2').value),
+    t1: document.getElementById('g-t1').value.trim(),
+    t2: document.getElementById('g-t2').value.trim()
+  };
+  sendToGoogleSheet('Guru', entry, 'g-msg');
+  setLocked('guru', nama);
+}
+
+function kirimKamadKeSheet() {
+  if (isLocked('kamad')) { showMsg('k-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
+  var nama = document.getElementById('k-nama').value.trim();
+  if (!nama) { showMsg('k-msg', 'Isi nama kepala madrasah terlebih dahulu.', false); return; }
+  var entry = {
+    nama: nama,
+    tanggal: document.getElementById('k-tanggal').value,
+    s1: Number(document.getElementById('k-s1').value),
+    s2: Number(document.getElementById('k-s2').value),
+    p1: Number(document.getElementById('k-p1').value),
+    p2: Number(document.getElementById('k-p2').value),
+    t1: document.getElementById('k-t1').value.trim(),
+    t2: document.getElementById('k-t2').value.trim(),
+    bukti: document.getElementById('k-bukti').value.trim()
+  };
+  sendToGoogleSheet('Kamad', entry, 'k-msg');
+  setLocked('kamad', nama);
+}
+
+function kirimObservasiKeSheet() {
+  if (isLocked('observasi')) { showMsg('o-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
+  var vals = [
+    document.getElementById('o-1').value,
+    document.getElementById('o-2').value,
+    document.getElementById('o-3').value,
+    document.getElementById('o-4').value
+  ];
+  if (vals.some(function(v){ return !v; })) {
+    showMsg('o-msg', 'Pilih Ada atau Tidak untuk semua indikator.', false);
+    return;
+  }
+  var entry = {
+    indikator1: 'Mading atau papan informasi nilai spiritual dan personal', status1: vals[0],
+    indikator2: 'Jadwal kegiatan keagamaan rutin', status2: vals[1],
+    indikator3: 'Catatan pelanggaran siswa terkait nilai personal', status3: vals[2],
+    indikator4: 'Dokumen RPP terintegrasi nilai spiritual atau personal', status4: vals[3],
+    catatan: document.getElementById('o-catatan').value.trim(),
+    tanggal: todayStr()
+  };
+  sendToGoogleSheet('Observasi', entry, 'o-msg');
+  setLocked('observasi', '');
 }
 
 function avg(a, b) { return Math.round(((a + b) / 2) * 10) / 10; }
