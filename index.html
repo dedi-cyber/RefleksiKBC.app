@@ -45,12 +45,12 @@
   }
   .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: #9AA6A0; margin-top: 2px; }
   .checkrow {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
     padding: 10px 0; border-bottom: 1px solid #EEF1EF; gap: 10px;
   }
   .checkrow:last-of-type { border-bottom: none; }
-  .checkrow span.label { font-size: 13px; flex: 1; }
-  .checkrow select { width: 110px; flex-shrink: 0; }
+  .checkrow span.label { font-size: 13px; flex: 1 1 100%; }
+  .checkrow select { width: 100%; flex: 1 1 100%; }
   button.submit {
     margin-top: 18px; width: 100%; padding: 11px; background: #1F4E3D; color: #fff;
     border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
@@ -210,8 +210,7 @@
       <label>Cerita singkat, nilai personal<span class="hint">Contoh nyata atau kesulitan menanamkan nilai personal bulan ini</span></label>
       <textarea id="g-t2" placeholder="Tulis pengalaman Anda"></textarea>
 
-      <button class="submit" onclick="submitGuru()">Simpan refleksi guru</button>
-      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimGuruKeSheet()">Kirim ke Google Sheet</button>
+      <button class="submit" onclick="kirimGuruKeSheet()">Kirim refleksi guru</button>
       <div class="msg" id="g-msg"></div>
       </div>
     </div>
@@ -257,8 +256,7 @@
       <label>Bukti dokumen yang ditunjukkan<span class="hint">Nama dokumen atau kebijakan tertulis terkait KBC, bila ada</span></label>
       <input type="text" id="k-bukti" placeholder="Contoh: SK tata tertib madrasah">
 
-      <button class="submit" onclick="submitKamad()">Simpan refleksi kamad</button>
-      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimKamadKeSheet()">Kirim ke Google Sheet</button>
+      <button class="submit" onclick="kirimKamadKeSheet()">Kirim refleksi kepala madrasah</button>
       <div class="msg" id="k-msg"></div>
       </div>
     </div>
@@ -317,12 +315,12 @@
       <label>Catatan pengamatan lapangan</label>
       <textarea id="o-catatan" placeholder="Tulis catatan tambahan hasil pengamatan"></textarea>
 
-      <button class="submit" onclick="submitObservasi()">Simpan hasil observasi</button>
-      <button class="submit" style="background:#3D6B4F; margin-top:8px;" onclick="kirimObservasiKeSheet()">Kirim ke Google Sheet</button>
+      <button class="submit" onclick="kirimObservasiKeSheet()">Kirim hasil observasi</button>
       <div class="msg" id="o-msg"></div>
       </div>
     </div>
   </div>
+
   <!-- REKAP -->
   <div class="panel" id="panel-rekap">
     <div class="card" style="margin-bottom:12px;">
@@ -503,99 +501,16 @@ function showMsg(id, text, ok) {
   el.className = 'msg ' + (ok ? 'ok' : 'err');
 }
 
-async function submitGuru() {
-  if (isLocked('guru')) { showMsg('g-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
-  var nama = document.getElementById('g-nama').value.trim();
-  if (!nama) { showMsg('g-msg', 'Isi nama guru terlebih dahulu.', false); return; }
-  var entry = {
-    nama: nama,
-    tanggal: document.getElementById('g-tanggal').value,
-    s1: Number(document.getElementById('g-s1').value),
-    s2: Number(document.getElementById('g-s2').value),
-    p1: Number(document.getElementById('g-p1').value),
-    p2: Number(document.getElementById('g-p2').value),
-    t1: document.getElementById('g-t1').value.trim(),
-    t2: document.getElementById('g-t2').value.trim(),
-    ts: Date.now()
-  };
-  try {
-    var key = 'guru:' + entry.ts;
-    var res = await window.storage.set(key, JSON.stringify(entry), true);
-    if (!res) throw new Error('gagal simpan');
-    showMsg('g-msg', 'Refleksi guru tersimpan.', true);
-    setLocked('guru', nama);
-  } catch (e) {
-    showMsg('g-msg', 'Gagal menyimpan, coba lagi.', false);
-  }
-}
-
-async function submitKamad() {
-  if (isLocked('kamad')) { showMsg('k-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
-  var nama = document.getElementById('k-nama').value.trim();
-  if (!nama) { showMsg('k-msg', 'Isi nama kepala madrasah terlebih dahulu.', false); return; }
-  var entry = {
-    nama: nama,
-    tanggal: document.getElementById('k-tanggal').value,
-    s1: Number(document.getElementById('k-s1').value),
-    s2: Number(document.getElementById('k-s2').value),
-    p1: Number(document.getElementById('k-p1').value),
-    p2: Number(document.getElementById('k-p2').value),
-    t1: document.getElementById('k-t1').value.trim(),
-    t2: document.getElementById('k-t2').value.trim(),
-    bukti: document.getElementById('k-bukti').value.trim(),
-    ts: Date.now()
-  };
-  try {
-    var key = 'kamad:' + entry.ts;
-    var res = await window.storage.set(key, JSON.stringify(entry), true);
-    if (!res) throw new Error('gagal simpan');
-    showMsg('k-msg', 'Refleksi kepala madrasah tersimpan.', true);
-    setLocked('kamad', nama);
-  } catch (e) {
-    showMsg('k-msg', 'Gagal menyimpan, coba lagi.', false);
-  }
-}
-
-async function submitObservasi() {
-  if (isLocked('observasi')) { showMsg('o-msg', 'Formulir ini sudah terkunci di perangkat ini.', false); return; }
-  var vals = [
-    document.getElementById('o-1').value,
-    document.getElementById('o-2').value,
-    document.getElementById('o-3').value,
-    document.getElementById('o-4').value
-  ];
-  if (vals.some(function(v){ return !v; })) {
-    showMsg('o-msg', 'Pilih Ada atau Tidak untuk semua indikator.', false);
-    return;
-  }
-  var entry = {
-    indikator: [
-      'Mading atau papan informasi nilai spiritual dan personal',
-      'Jadwal kegiatan keagamaan rutin',
-      'Catatan pelanggaran siswa terkait nilai personal',
-      'Dokumen RPP terintegrasi nilai spiritual atau personal'
-    ],
-    status: vals,
-    catatan: document.getElementById('o-catatan').value.trim(),
-    tanggal: todayStr(),
-    ts: Date.now()
-  };
-  try {
-    var key = 'observasi:' + entry.ts;
-    var res = await window.storage.set(key, JSON.stringify(entry), true);
-    if (!res) throw new Error('gagal simpan');
-    showMsg('o-msg', 'Hasil observasi tersimpan.', true);
-    setLocked('observasi', '');
-  } catch (e) {
-    showMsg('o-msg', 'Gagal menyimpan, coba lagi.', false);
-  }
-}
+// Fungsi submitGuru, submitKamad, submitObservasi yang lama sudah dihapus.
+// Semua pengiriman sekarang lewat kirimGuruKeSheet, kirimKamadKeSheet, kirimObservasiKeSheet
+// yang langsung mengirim ke Google Sheet, karena window.storage hanya berfungsi
+// di dalam pratinjau Claude dan tidak berfungsi saat file ini dibuka mandiri di browser.
 
 // Ganti URL di bawah ini dengan URL Web App hasil deploy Google Apps Script Anda.
 // Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
-var GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoeQ-oI2tVbnXCf5-sLjEavPI6DsaD8iKp4zwTx2DyyY4yxhd0BPPOii8eDDccWXUh/exec";
+var GOOGLE_SCRIPT_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
 
-function sendToGoogleSheet(sheetName, entry, msgId) {
+function sendToGoogleSheet(sheetName, entry, msgId, onSuccess) {
   if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('GANTI_DENGAN') !== -1) {
     showMsg(msgId, 'URL Google Sheet belum diatur. Hubungi pengawas untuk mengatur ini.', false);
     return;
@@ -607,9 +522,10 @@ function sendToGoogleSheet(sheetName, entry, msgId) {
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload)
   }).then(function() {
-    showMsg(msgId, 'Data terkirim ke Google Sheet.', true);
+    showMsg(msgId, 'Data terkirim. Kalau tidak muncul di Google Sheet dalam beberapa menit, hubungi pengawas.', true);
+    if (onSuccess) onSuccess();
   }).catch(function() {
-    showMsg(msgId, 'Gagal mengirim ke Google Sheet. Periksa koneksi internet.', false);
+    showMsg(msgId, 'Gagal mengirim, periksa koneksi internet dan coba lagi.', false);
   });
 }
 
@@ -627,8 +543,7 @@ function kirimGuruKeSheet() {
     t1: document.getElementById('g-t1').value.trim(),
     t2: document.getElementById('g-t2').value.trim()
   };
-  sendToGoogleSheet('Guru', entry, 'g-msg');
-  setLocked('guru', nama);
+  sendToGoogleSheet('Guru', entry, 'g-msg', function(){ setLocked('guru', nama); });
 }
 
 function kirimKamadKeSheet() {
@@ -646,8 +561,7 @@ function kirimKamadKeSheet() {
     t2: document.getElementById('k-t2').value.trim(),
     bukti: document.getElementById('k-bukti').value.trim()
   };
-  sendToGoogleSheet('Kamad', entry, 'k-msg');
-  setLocked('kamad', nama);
+  sendToGoogleSheet('Kamad', entry, 'k-msg', function(){ setLocked('kamad', nama); });
 }
 
 function kirimObservasiKeSheet() {
@@ -659,7 +573,7 @@ function kirimObservasiKeSheet() {
     document.getElementById('o-4').value
   ];
   if (vals.some(function(v){ return !v; })) {
-    showMsg('o-msg', 'Pilih Ada atau Tidak untuk semua indikator.', false);
+    showMsg('o-msg', 'Pilih skala 1 sampai 4 untuk semua indikator.', false);
     return;
   }
   var entry = {
@@ -670,42 +584,48 @@ function kirimObservasiKeSheet() {
     catatan: document.getElementById('o-catatan').value.trim(),
     tanggal: todayStr()
   };
-  sendToGoogleSheet('Observasi', entry, 'o-msg');
-  setLocked('observasi', '');
+  sendToGoogleSheet('Observasi', entry, 'o-msg', function(){ setLocked('observasi', ''); });
 }
 
 function avg(a, b) { return Math.round(((a + b) / 2) * 10) / 10; }
 
-async function fetchAll(prefix) {
-  var listRes;
+async function fetchFromSheet() {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf('GANTI_DENGAN') !== -1) {
+    return null;
+  }
   try {
-    listRes = await window.storage.list(prefix, true);
+    var res = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET' });
+    var data = await res.json();
+    return data;
   } catch (e) {
-    return [];
+    return null;
   }
-  if (!listRes || !listRes.keys) return [];
-  var results = [];
-  for (var i = 0; i < listRes.keys.length; i++) {
-    try {
-      var r = await window.storage.get(listRes.keys[i], true);
-      if (r && r.value) results.push(JSON.parse(r.value));
-    } catch (e) {}
-  }
-  results.sort(function(a,b){ return b.ts - a.ts; });
-  return results;
 }
 
 async function loadRekap() {
   var el = document.getElementById('rekap-content');
   el.className = 'loading';
-  el.textContent = 'Memuat data...';
+  el.textContent = 'Memuat data dari Google Sheet...';
 
-  var gurus = await fetchAll('guru:');
-  var kamads = await fetchAll('kamad:');
-  var observasis = await fetchAll('observasi:');
+  var data = await fetchFromSheet();
 
-  var gSpirAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+avg(e.s1,e.s2);},0)/gurus.length)*10)/10 : null;
-  var gPersAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+avg(e.p1,e.p2);},0)/gurus.length)*10)/10 : null;
+  if (data === null) {
+    el.className = '';
+    el.innerHTML = '<div class="entry"><b>Rekap belum bisa dimuat.</b><div class="text">Pastikan URL Google Sheet sudah diatur dengan benar, dan pengaturan Who has access di Apps Script sudah Anyone. Coba muat ulang tab ini setelah itu.</div></div>';
+    return;
+  }
+  if (data.error) {
+    el.className = '';
+    el.innerHTML = '<div class="entry"><b>Google Sheet mengembalikan error.</b><div class="text">' + escapeHtml(data.error) + '</div></div>';
+    return;
+  }
+
+  var gurus = data.Guru || [];
+  var kamads = data.Kamad || [];
+  var observasis = data.Observasi || [];
+
+  var gSpirAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+Number(e['Rata-rata Spiritual']||0);},0)/gurus.length)*10)/10 : null;
+  var gPersAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+Number(e['Rata-rata Personal']||0);},0)/gurus.length)*10)/10 : null;
 
   var html = '';
   html += '<div class="summarybox">';
@@ -719,10 +639,10 @@ async function loadRekap() {
     html += '<div class="empty">Belum ada guru yang mengisi.</div>';
   } else {
     gurus.forEach(function(e) {
-      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e.nama) + '</span><span>' + e.tanggal + '</span></div>';
-      html += '<div class="avgs"><div>Spiritual<b>' + avg(e.s1,e.s2) + '</b></div><div>Personal<b>' + avg(e.p1,e.p2) + '</b></div></div>';
-      if (e.t1) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e.t1) + '</div>';
-      if (e.t2) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e.t2) + '</div>';
+      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e['Nama Guru']) + '</span><span>' + escapeHtml(e['Tanggal Pengisian']) + '</span></div>';
+      html += '<div class="avgs"><div>Spiritual<b>' + e['Rata-rata Spiritual'] + '</b></div><div>Personal<b>' + e['Rata-rata Personal'] + '</b></div></div>';
+      if (e['Cerita Spiritual']) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e['Cerita Spiritual']) + '</div>';
+      if (e['Cerita Personal']) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e['Cerita Personal']) + '</div>';
       html += '</div>';
     });
   }
@@ -733,11 +653,11 @@ async function loadRekap() {
     html += '<div class="empty">Belum ada kamad yang mengisi.</div>';
   } else {
     kamads.forEach(function(e) {
-      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e.nama) + '</span><span>' + e.tanggal + '</span></div>';
-      html += '<div class="avgs"><div>Spiritual<b>' + avg(e.s1,e.s2) + '</b></div><div>Personal<b>' + avg(e.p1,e.p2) + '</b></div></div>';
-      if (e.t1) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e.t1) + '</div>';
-      if (e.t2) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e.t2) + '</div>';
-      if (e.bukti) html += '<div class="text"><b>Bukti dokumen:</b> ' + escapeHtml(e.bukti) + '</div>';
+      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e['Nama Kamad']) + '</span><span>' + escapeHtml(e['Tanggal Pengisian']) + '</span></div>';
+      html += '<div class="avgs"><div>Spiritual<b>' + e['Rata-rata Spiritual'] + '</b></div><div>Personal<b>' + e['Rata-rata Personal'] + '</b></div></div>';
+      if (e['Cerita Spiritual']) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e['Cerita Spiritual']) + '</div>';
+      if (e['Cerita Personal']) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e['Cerita Personal']) + '</div>';
+      if (e['Bukti Dokumen']) html += '<div class="text"><b>Bukti dokumen:</b> ' + escapeHtml(e['Bukti Dokumen']) + '</div>';
       html += '</div>';
     });
   }
@@ -748,11 +668,12 @@ async function loadRekap() {
     html += '<div class="empty">Belum ada hasil observasi.</div>';
   } else {
     observasis.forEach(function(e) {
-      html += '<div class="entry"><div class="top"><span>Observasi</span><span>' + e.tanggal + '</span></div>';
-      for (var i = 0; i < e.indikator.length; i++) {
-        html += '<div class="text">' + escapeHtml(e.indikator[i]) + ': <b>' + escapeHtml(e.status[i]) + '</b></div>';
-      }
-      if (e.catatan) html += '<div class="text"><b>Catatan:</b> ' + escapeHtml(e.catatan) + '</div>';
+      html += '<div class="entry"><div class="top"><span>Observasi</span><span>' + escapeHtml(e['Tanggal']) + '</span></div>';
+      html += '<div class="text">Mading nilai: <b>' + escapeHtml(String(e['Mading Nilai'])) + '</b></div>';
+      html += '<div class="text">Jadwal kegiatan keagamaan: <b>' + escapeHtml(String(e['Jadwal Kegiatan Keagamaan'])) + '</b></div>';
+      html += '<div class="text">Catatan pelanggaran personal: <b>' + escapeHtml(String(e['Catatan Pelanggaran Personal'])) + '</b></div>';
+      html += '<div class="text">RPP terintegrasi nilai: <b>' + escapeHtml(String(e['RPP Terintegrasi Nilai'])) + '</b></div>';
+      if (e['Catatan Lapangan']) html += '<div class="text"><b>Catatan:</b> ' + escapeHtml(e['Catatan Lapangan']) + '</div>';
       html += '</div>';
     });
   }
