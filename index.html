@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Refleksi Baseline KBC - MTsN 4 Agam</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: #F4F6F5;
+    color: #1F2A24;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+  header { padding: 18px 0 14px; border-bottom: 1px solid #DCE3DF; margin-bottom: 18px; }
+  header h1 { font-size: 18px; margin: 0 0 4px; color: #1F4E3D; }
+  header p { font-size: 13px; color: #5B6B62; margin: 0; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab {
+    flex: 1; min-width: 130px; text-align: center; padding: 10px 8px;
+    background: #fff; border: 1px solid #DCE3DF; border-radius: 8px;
+    font-size: 13px; cursor: pointer; color: #5B6B62;
+  }
+  .tab.active { background: #1F4E3D; color: #fff; border-color: #1F4E3D; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: #fff; border: 1px solid #DCE3DF; border-radius: 10px;
+    padding: 18px 18px 20px; margin-bottom: 16px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 4px; color: #1F4E3D; }
+  .card .sub { font-size: 12px; color: #7C8A81; margin: 0 0 16px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: #2C3B33; }
+  label .hint { font-weight: 400; color: #7C8A81; display: block; font-size: 12px; margin-top: 2px; }
+  input[type=text], input[type=date], textarea, select {
+    width: 100%; padding: 9px 10px; border: 1px solid #C9D3CD; border-radius: 6px;
+    font-size: 14px; font-family: inherit; background: #FAFBFA;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  .scale-row { display: flex; align-items: center; gap: 10px; }
+  .scale-row input[type=range] { flex: 1; }
+  .scale-val {
+    min-width: 30px; text-align: center; font-weight: 700; font-size: 14px;
+    background: #E7F0EA; color: #1F4E3D; border-radius: 6px; padding: 4px 0;
+  }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: #9AA6A0; margin-top: 2px; }
+  .checkrow {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #EEF1EF; gap: 10px;
+  }
+  .checkrow:last-of-type { border-bottom: none; }
+  .checkrow span.label { font-size: 13px; flex: 1; }
+  .checkrow select { width: 110px; flex-shrink: 0; }
+  button.submit {
+    margin-top: 18px; width: 100%; padding: 11px; background: #1F4E3D; color: #fff;
+    border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  button.submit:active { opacity: 0.85; }
+  .msg { font-size: 13px; margin-top: 10px; padding: 8px 10px; border-radius: 6px; display: none; }
+  .msg.ok { background: #E4F3E9; color: #1F6B3F; display: block; }
+  .msg.err { background: #FBE9E7; color: #A13A2C; display: block; }
+  .entry {
+    border: 1px solid #E1E7E3; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;
+    background: #FDFEFD;
+  }
+  .entry .top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #1F4E3D; }
+  .entry .meta { font-size: 12px; color: #8B968F; margin: 2px 0 8px; }
+  .entry .avgs { display: flex; gap: 14px; margin-bottom: 8px; }
+  .entry .avgs div { background: #F0F5F1; border-radius: 6px; padding: 6px 10px; font-size: 12px; }
+  .entry .avgs b { display: block; font-size: 15px; color: #1F4E3D; }
+  .entry .text { font-size: 12.5px; color: #4A574E; margin: 4px 0; }
+  .empty { font-size: 13px; color: #8B968F; text-align: center; padding: 20px 0; }
+  .summarybox { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .summarybox .sc {
+    flex: 1; min-width: 140px; background: #fff; border: 1px solid #DCE3DF; border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .summarybox .sc .n { font-size: 20px; font-weight: 700; color: #1F4E3D; }
+  .summarybox .sc .l { font-size: 12px; color: #7C8A81; }
+  .note { font-size: 11.5px; color: #8B968F; margin-top: 10px; }
+  .loading { text-align: center; color: #8B968F; font-size: 13px; padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Refleksi Baseline KBC</h1>
+    <p>MTsN 4 Agam - Siklus 1 (Nilai Spiritual dan Nilai Personal)</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="guru">Refleksi Guru</div>
+    <div class="tab" data-tab="kamad">Refleksi Kamad</div>
+    <div class="tab" data-tab="observasi">Observasi</div>
+    <div class="tab" data-tab="rekap">Rekap Pengawas</div>
+  </div>
+
+  <!-- GURU -->
+  <div class="panel active" id="panel-guru">
+    <div class="card">
+      <h2>Refleksi Guru</h2>
+      <p class="sub">Isi mandiri, jawaban tidak memengaruhi penilaian kinerja.</p>
+
+      <label>Nama guru</label>
+      <input type="text" id="g-nama" placeholder="Nama lengkap">
+
+      <label>Tanggal pengisian</label>
+      <input type="date" id="g-tanggal">
+
+      <label>Skala spiritual 1<span class="hint">Konsistensi mengintegrasikan nilai spiritual dalam RPP dan pengajaran</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="g-s1"><div class="scale-val" id="g-s1v">3</div></div>
+      <div class="scale-labels"><span>1 sangat rendah</span><span>5 sangat tinggi</span></div>
+
+      <label>Skala spiritual 2<span class="hint">Frekuensi menegur atau membimbing siswa terkait nilai agama sebulan terakhir</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="g-s2"><div class="scale-val" id="g-s2v">3</div></div>
+      <div class="scale-labels"><span>1 tidak pernah</span><span>5 sangat sering</span></div>
+
+      <label>Skala personal 1<span class="hint">Keyakinan menjaga martabat siswa saat siswa melakukan kesalahan</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="g-p1"><div class="scale-val" id="g-p1v">3</div></div>
+      <div class="scale-labels"><span>1 sangat rendah</span><span>5 sangat tinggi</span></div>
+
+      <label>Skala personal 2<span class="hint">Frekuensi memberi penguatan positif rasa percaya diri siswa sebulan terakhir</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="g-p2"><div class="scale-val" id="g-p2v">3</div></div>
+      <div class="scale-labels"><span>1 tidak pernah</span><span>5 sangat sering</span></div>
+
+      <label>Cerita singkat, nilai spiritual<span class="hint">Contoh nyata atau kesulitan mengajarkan nilai spiritual bulan ini</span></label>
+      <textarea id="g-t1" placeholder="Tulis pengalaman Anda"></textarea>
+
+      <label>Cerita singkat, nilai personal<span class="hint">Contoh nyata atau kesulitan menanamkan nilai personal bulan ini</span></label>
+      <textarea id="g-t2" placeholder="Tulis pengalaman Anda"></textarea>
+
+      <button class="submit" onclick="submitGuru()">Simpan refleksi guru</button>
+      <div class="msg" id="g-msg"></div>
+    </div>
+  </div>
+
+  <!-- KAMAD -->
+  <div class="panel" id="panel-kamad">
+    <div class="card">
+      <h2>Refleksi Kepala Madrasah</h2>
+      <p class="sub">Isi mandiri, jawaban untuk perencanaan pendampingan, bukan evaluasi jabatan.</p>
+
+      <label>Nama kepala madrasah</label>
+      <input type="text" id="k-nama" placeholder="Nama lengkap">
+
+      <label>Tanggal pengisian</label>
+      <input type="date" id="k-tanggal">
+
+      <label>Skala spiritual 1<span class="hint">Konsistensi kebijakan penguatan nilai spiritual dijalankan guru dan staf</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="k-s1"><div class="scale-val" id="k-s1v">3</div></div>
+      <div class="scale-labels"><span>1 sangat rendah</span><span>5 sangat tinggi</span></div>
+
+      <label>Skala spiritual 2<span class="hint">Frekuensi memantau langsung kegiatan keagamaan rutin madrasah</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="k-s2"><div class="scale-val" id="k-s2v">3</div></div>
+      <div class="scale-labels"><span>1 tidak pernah</span><span>5 sangat sering</span></div>
+
+      <label>Skala personal 1<span class="hint">Konsistensi kebijakan melindungi martabat guru dan staf</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="k-p1"><div class="scale-val" id="k-p1v">3</div></div>
+      <div class="scale-labels"><span>1 sangat rendah</span><span>5 sangat tinggi</span></div>
+
+      <label>Skala personal 2<span class="hint">Frekuensi memberi apresiasi langsung untuk menguatkan percaya diri staf</span></label>
+      <div class="scale-row"><input type="range" min="1" max="5" step="1" value="3" id="k-p2"><div class="scale-val" id="k-p2v">3</div></div>
+      <div class="scale-labels"><span>1 tidak pernah</span><span>5 sangat sering</span></div>
+
+      <label>Cerita singkat, nilai spiritual<span class="hint">Kebijakan atau teladan nilai spiritual yang sudah dijalankan</span></label>
+      <textarea id="k-t1" placeholder="Tulis penjelasan Anda"></textarea>
+
+      <label>Cerita singkat, nilai personal<span class="hint">Kebijakan atau upaya menjaga martabat guru dan staf</span></label>
+      <textarea id="k-t2" placeholder="Tulis penjelasan Anda"></textarea>
+
+      <label>Bukti dokumen yang ditunjukkan<span class="hint">Nama dokumen atau kebijakan tertulis terkait KBC, bila ada</span></label>
+      <input type="text" id="k-bukti" placeholder="Contoh: SK tata tertib madrasah">
+
+      <button class="submit" onclick="submitKamad()">Simpan refleksi kamad</button>
+      <div class="msg" id="k-msg"></div>
+    </div>
+  </div>
+
+  <!-- OBSERVASI -->
+  <div class="panel" id="panel-observasi">
+    <div class="card">
+      <h2>Checklist observasi lapangan</h2>
+      <p class="sub">Isi di awal kunjungan, sebelum wawancara guru dan kamad.</p>
+
+      <div class="checkrow">
+        <span class="label">Mading atau papan informasi bertema nilai spiritual dan personal</span>
+        <select id="o-1"><option value="">Pilih</option><option>Ada</option><option>Tidak</option></select>
+      </div>
+      <div class="checkrow">
+        <span class="label">Jadwal tertulis kegiatan keagamaan rutin di madrasah</span>
+        <select id="o-2"><option value="">Pilih</option><option>Ada</option><option>Tidak</option></select>
+      </div>
+      <div class="checkrow">
+        <span class="label">Catatan pelanggaran siswa terkait nilai personal 3 bulan terakhir</span>
+        <select id="o-3"><option value="">Pilih</option><option>Ada</option><option>Tidak</option></select>
+      </div>
+      <div class="checkrow">
+        <span class="label">Dokumen RPP yang mencantumkan integrasi nilai spiritual atau personal</span>
+        <select id="o-4"><option value="">Pilih</option><option>Ada</option><option>Tidak</option></select>
+      </div>
+
+      <label>Catatan pengamatan lapangan</label>
+      <textarea id="o-catatan" placeholder="Tulis catatan tambahan hasil pengamatan"></textarea>
+
+      <button class="submit" onclick="submitObservasi()">Simpan hasil observasi</button>
+      <div class="msg" id="o-msg"></div>
+    </div>
+  </div>
+
+  <!-- REKAP -->
+  <div class="panel" id="panel-rekap">
+    <div id="rekap-content" class="loading">Memuat data...</div>
+  </div>
+
+  <p class="note">Data disimpan bersama di penyimpanan artefak ini dan bisa dilihat oleh siapa pun yang membuka formulir ini.</p>
+</div>
+
+<script>
+function todayStr() {
+  var d = new Date();
+  return d.toISOString().slice(0,10);
+}
+document.getElementById('g-tanggal').value = todayStr();
+document.getElementById('k-tanggal').value = todayStr();
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'rekap') loadRekap();
+  });
+});
+
+['g-s1','g-s2','g-p1','g-p2','k-s1','k-s2','k-p1','k-p2'].forEach(function(id) {
+  var input = document.getElementById(id);
+  var out = document.getElementById(id + 'v');
+  input.addEventListener('input', function(){ out.textContent = input.value; });
+});
+
+function showMsg(id, text, ok) {
+  var el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+
+async function submitGuru() {
+  var nama = document.getElementById('g-nama').value.trim();
+  if (!nama) { showMsg('g-msg', 'Isi nama guru terlebih dahulu.', false); return; }
+  var entry = {
+    nama: nama,
+    tanggal: document.getElementById('g-tanggal').value,
+    s1: Number(document.getElementById('g-s1').value),
+    s2: Number(document.getElementById('g-s2').value),
+    p1: Number(document.getElementById('g-p1').value),
+    p2: Number(document.getElementById('g-p2').value),
+    t1: document.getElementById('g-t1').value.trim(),
+    t2: document.getElementById('g-t2').value.trim(),
+    ts: Date.now()
+  };
+  try {
+    var key = 'guru:' + entry.ts;
+    var res = await window.storage.set(key, JSON.stringify(entry), true);
+    if (!res) throw new Error('gagal simpan');
+    showMsg('g-msg', 'Refleksi guru tersimpan.', true);
+    ['g-nama','g-t1','g-t2'].forEach(function(id){ document.getElementById(id).value = ''; });
+  } catch (e) {
+    showMsg('g-msg', 'Gagal menyimpan, coba lagi.', false);
+  }
+}
+
+async function submitKamad() {
+  var nama = document.getElementById('k-nama').value.trim();
+  if (!nama) { showMsg('k-msg', 'Isi nama kepala madrasah terlebih dahulu.', false); return; }
+  var entry = {
+    nama: nama,
+    tanggal: document.getElementById('k-tanggal').value,
+    s1: Number(document.getElementById('k-s1').value),
+    s2: Number(document.getElementById('k-s2').value),
+    p1: Number(document.getElementById('k-p1').value),
+    p2: Number(document.getElementById('k-p2').value),
+    t1: document.getElementById('k-t1').value.trim(),
+    t2: document.getElementById('k-t2').value.trim(),
+    bukti: document.getElementById('k-bukti').value.trim(),
+    ts: Date.now()
+  };
+  try {
+    var key = 'kamad:' + entry.ts;
+    var res = await window.storage.set(key, JSON.stringify(entry), true);
+    if (!res) throw new Error('gagal simpan');
+    showMsg('k-msg', 'Refleksi kepala madrasah tersimpan.', true);
+    ['k-nama','k-t1','k-t2','k-bukti'].forEach(function(id){ document.getElementById(id).value = ''; });
+  } catch (e) {
+    showMsg('k-msg', 'Gagal menyimpan, coba lagi.', false);
+  }
+}
+
+async function submitObservasi() {
+  var vals = [
+    document.getElementById('o-1').value,
+    document.getElementById('o-2').value,
+    document.getElementById('o-3').value,
+    document.getElementById('o-4').value
+  ];
+  if (vals.some(function(v){ return !v; })) {
+    showMsg('o-msg', 'Pilih Ada atau Tidak untuk semua indikator.', false);
+    return;
+  }
+  var entry = {
+    indikator: [
+      'Mading atau papan informasi nilai spiritual dan personal',
+      'Jadwal kegiatan keagamaan rutin',
+      'Catatan pelanggaran siswa terkait nilai personal',
+      'Dokumen RPP terintegrasi nilai spiritual atau personal'
+    ],
+    status: vals,
+    catatan: document.getElementById('o-catatan').value.trim(),
+    tanggal: todayStr(),
+    ts: Date.now()
+  };
+  try {
+    var key = 'observasi:' + entry.ts;
+    var res = await window.storage.set(key, JSON.stringify(entry), true);
+    if (!res) throw new Error('gagal simpan');
+    showMsg('o-msg', 'Hasil observasi tersimpan.', true);
+    ['o-1','o-2','o-3','o-4'].forEach(function(id){ document.getElementById(id).value = ''; });
+    document.getElementById('o-catatan').value = '';
+  } catch (e) {
+    showMsg('o-msg', 'Gagal menyimpan, coba lagi.', false);
+  }
+}
+
+function avg(a, b) { return Math.round(((a + b) / 2) * 10) / 10; }
+
+async function fetchAll(prefix) {
+  var listRes;
+  try {
+    listRes = await window.storage.list(prefix, true);
+  } catch (e) {
+    return [];
+  }
+  if (!listRes || !listRes.keys) return [];
+  var results = [];
+  for (var i = 0; i < listRes.keys.length; i++) {
+    try {
+      var r = await window.storage.get(listRes.keys[i], true);
+      if (r && r.value) results.push(JSON.parse(r.value));
+    } catch (e) {}
+  }
+  results.sort(function(a,b){ return b.ts - a.ts; });
+  return results;
+}
+
+async function loadRekap() {
+  var el = document.getElementById('rekap-content');
+  el.className = 'loading';
+  el.textContent = 'Memuat data...';
+
+  var gurus = await fetchAll('guru:');
+  var kamads = await fetchAll('kamad:');
+  var observasis = await fetchAll('observasi:');
+
+  var gSpirAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+avg(e.s1,e.s2);},0)/gurus.length)*10)/10 : null;
+  var gPersAvg = gurus.length ? Math.round((gurus.reduce(function(s,e){return s+avg(e.p1,e.p2);},0)/gurus.length)*10)/10 : null;
+
+  var html = '';
+  html += '<div class="summarybox">';
+  html += '<div class="sc"><div class="n">' + gurus.length + '</div><div class="l">Guru mengisi</div></div>';
+  html += '<div class="sc"><div class="n">' + (gSpirAvg !== null ? gSpirAvg : '-') + '</div><div class="l">Rata-rata spiritual guru</div></div>';
+  html += '<div class="sc"><div class="n">' + (gPersAvg !== null ? gPersAvg : '-') + '</div><div class="l">Rata-rata personal guru</div></div>';
+  html += '</div>';
+
+  html += '<div class="card"><h2>Refleksi guru</h2>';
+  if (!gurus.length) {
+    html += '<div class="empty">Belum ada guru yang mengisi.</div>';
+  } else {
+    gurus.forEach(function(e) {
+      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e.nama) + '</span><span>' + e.tanggal + '</span></div>';
+      html += '<div class="avgs"><div>Spiritual<b>' + avg(e.s1,e.s2) + '</b></div><div>Personal<b>' + avg(e.p1,e.p2) + '</b></div></div>';
+      if (e.t1) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e.t1) + '</div>';
+      if (e.t2) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e.t2) + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+
+  html += '<div class="card"><h2>Refleksi kepala madrasah</h2>';
+  if (!kamads.length) {
+    html += '<div class="empty">Belum ada kamad yang mengisi.</div>';
+  } else {
+    kamads.forEach(function(e) {
+      html += '<div class="entry"><div class="top"><span>' + escapeHtml(e.nama) + '</span><span>' + e.tanggal + '</span></div>';
+      html += '<div class="avgs"><div>Spiritual<b>' + avg(e.s1,e.s2) + '</b></div><div>Personal<b>' + avg(e.p1,e.p2) + '</b></div></div>';
+      if (e.t1) html += '<div class="text"><b>Spiritual:</b> ' + escapeHtml(e.t1) + '</div>';
+      if (e.t2) html += '<div class="text"><b>Personal:</b> ' + escapeHtml(e.t2) + '</div>';
+      if (e.bukti) html += '<div class="text"><b>Bukti dokumen:</b> ' + escapeHtml(e.bukti) + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+
+  html += '<div class="card"><h2>Checklist observasi</h2>';
+  if (!observasis.length) {
+    html += '<div class="empty">Belum ada hasil observasi.</div>';
+  } else {
+    observasis.forEach(function(e) {
+      html += '<div class="entry"><div class="top"><span>Observasi</span><span>' + e.tanggal + '</span></div>';
+      for (var i = 0; i < e.indikator.length; i++) {
+        html += '<div class="text">' + escapeHtml(e.indikator[i]) + ': <b>' + escapeHtml(e.status[i]) + '</b></div>';
+      }
+      if (e.catatan) html += '<div class="text"><b>Catatan:</b> ' + escapeHtml(e.catatan) + '</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+
+  el.className = '';
+  el.innerHTML = html;
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
